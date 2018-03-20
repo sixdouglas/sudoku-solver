@@ -36,7 +36,7 @@ public class GridTest {
 
     @Test
     public void setCellValue_should_do_nothing_if_value_is_null() {
-        CellStatus[][][] copy = Arrays.copyOf(sut.getCells(), 10);
+        CellStatus[][][] copy = Arrays.copyOf(sut.getCells(), 9);
 
         sut.setCellValue(1, 1, null);
 
@@ -44,72 +44,93 @@ public class GridTest {
     }
 
     @Test
+    public void setCellValue_should_set_value_on_1th_layer_when_value_is_1() {
+        sut.setCellValue(1, 1, 1);
+
+        assertThat(sut.getCells()[0][1][1]).isEqualTo(CellStatus.ONE);
+    }
+
+    @Test
     public void setCellValue_should_set_value_on_4th_layer_when_value_is_4() {
         sut.setCellValue(1, 1, 4);
 
-        assertThat(sut.getCells()[4][1][1]).isEqualTo(CellStatus.FOUR);
+        assertThat(sut.getCells()[3][1][1]).isEqualTo(CellStatus.FOUR);
+    }
+
+    @Test
+    public void setCellValue_should_set_value_on_9th_layer_when_value_is_9() {
+        sut.setCellValue(1, 1, 9);
+
+        assertThat(sut.getCells()[8][1][1]).isEqualTo(CellStatus.NINE);
+    }
+
+    @Test
+    public void setCellValue_should_set_value_on_5th_layer_when_value_is_5() {
+        sut.setCellValue(4, 4, 5);
+
+        assertThat(sut.getCells()[4][4][4]).isEqualTo(CellStatus.FIVE);
     }
 
     @Test
     public void setCellValue_should_set_occupied_on_other_layers_when_value_is_4() {
         sut.setCellValue(1, 1, 4);
 
+        assertThat(sut.getCells()[0][1][1]).isEqualTo(CellStatus.OCCUPIED);
         assertThat(sut.getCells()[1][1][1]).isEqualTo(CellStatus.OCCUPIED);
         assertThat(sut.getCells()[2][1][1]).isEqualTo(CellStatus.OCCUPIED);
-        assertThat(sut.getCells()[3][1][1]).isEqualTo(CellStatus.OCCUPIED);
+        assertThat(sut.getCells()[4][1][1]).isEqualTo(CellStatus.OCCUPIED);
         assertThat(sut.getCells()[5][1][1]).isEqualTo(CellStatus.OCCUPIED);
         assertThat(sut.getCells()[6][1][1]).isEqualTo(CellStatus.OCCUPIED);
         assertThat(sut.getCells()[7][1][1]).isEqualTo(CellStatus.OCCUPIED);
         assertThat(sut.getCells()[8][1][1]).isEqualTo(CellStatus.OCCUPIED);
-        assertThat(sut.getCells()[9][1][1]).isEqualTo(CellStatus.OCCUPIED);
     }
 
     @Test
     public void setCellValue_should_set_forbidden_on_other_cells_of_the_second_line_when_value_is_4() {
         sut.setCellValue(1, 1, 4);
 
-        assertThat(sut.getCells()[4][0][1]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][2][1]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][3][1]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][4][1]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][5][1]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][6][1]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][7][1]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][8][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][0][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][2][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][3][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][4][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][5][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][6][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][7][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][8][1]).isEqualTo(CellStatus.FORBIDDEN);
     }
 
     @Test
     public void setCellValue_should_set_forbidden_on_other_cells_of_the_second_column_when_value_is_4() {
         sut.setCellValue(1, 1, 4);
 
-        assertThat(sut.getCells()[4][1][0]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][1][2]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][1][3]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][1][4]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][1][5]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][1][6]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][1][7]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][1][8]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][0]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][2]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][3]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][4]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][5]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][6]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][7]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][8]).isEqualTo(CellStatus.FORBIDDEN);
     }
 
     @Test
     public void setCellValue_should_set_forbidden_on_other_cells_of_the_same_quadrant_when_value_is_4() {
         sut.setCellValue(1, 1, 4);
 
-        assertThat(sut.getCells()[4][0][0]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][0][1]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][0][2]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][1][0]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][1][2]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][2][0]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][2][1]).isEqualTo(CellStatus.FORBIDDEN);
-        assertThat(sut.getCells()[4][2][2]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][0][0]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][0][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][0][2]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][0]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][1][2]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][2][0]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][2][1]).isEqualTo(CellStatus.FORBIDDEN);
+        assertThat(sut.getCells()[3][2][2]).isEqualTo(CellStatus.FORBIDDEN);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setCellValue_should_throw_if_cell_value_is_forbidden() {
         // Given
-        sut.getCells()[4][1][1] = CellStatus.FORBIDDEN;
+        sut.getCells()[3][1][1] = CellStatus.FORBIDDEN;
 
         // When
         sut.setCellValue(1, 1, 4);
@@ -118,7 +139,7 @@ public class GridTest {
     @Test(expected = IllegalArgumentException.class)
     public void setCellValue_should_throw_if_cell_value_is_occupied() {
         // Given
-        sut.getCells()[4][1][1] = CellStatus.OCCUPIED;
+        sut.getCells()[3][1][1] = CellStatus.OCCUPIED;
 
         // When
         sut.setCellValue(1, 1, 4);
@@ -280,15 +301,7 @@ public class GridTest {
     @Test
     public void getCellValue_should_return_blank_when_all_layers_are_occupied() {
         // Given
-        sut.getCells()[1][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[2][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[3][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[4][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[5][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[6][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[7][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[8][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[9][1][1] = CellStatus.OCCUPIED;
+        givenAStatusForCells(CellStatus.OCCUPIED, -1, 1, 1);
 
         // When
         String cellValue = sut.getCellValue(1, 1);
@@ -300,15 +313,7 @@ public class GridTest {
     @Test
     public void getCellValue_should_return_blank_when_all_layers_are_empty() {
         // Given
-        sut.getCells()[1][1][1] = CellStatus.EMPTY;
-        sut.getCells()[2][1][1] = CellStatus.EMPTY;
-        sut.getCells()[3][1][1] = CellStatus.EMPTY;
-        sut.getCells()[4][1][1] = CellStatus.EMPTY;
-        sut.getCells()[5][1][1] = CellStatus.EMPTY;
-        sut.getCells()[6][1][1] = CellStatus.EMPTY;
-        sut.getCells()[7][1][1] = CellStatus.EMPTY;
-        sut.getCells()[8][1][1] = CellStatus.EMPTY;
-        sut.getCells()[9][1][1] = CellStatus.EMPTY;
+        givenAStatusForCells(CellStatus.EMPTY, -1, 1, 1);
 
         // When
         String cellValue = sut.getCellValue(1, 1);
@@ -320,15 +325,7 @@ public class GridTest {
     @Test
     public void getCellValue_should_return_blank_when_all_layers_are_forbidden() {
         // Given
-        sut.getCells()[1][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[2][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[3][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[4][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[5][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[6][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[7][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[8][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[9][1][1] = CellStatus.FORBIDDEN;
+        givenAStatusForCells(CellStatus.FORBIDDEN, -1, 1, 1);
 
         // When
         String cellValue = sut.getCellValue(1, 1);
@@ -340,247 +337,24 @@ public class GridTest {
     @Test
     public void getCellValue_should_return_four_when_value_is_four() {
         // Given
-        sut.getCells()[1][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[2][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[3][1][1] = CellStatus.FORBIDDEN;
+        givenAStatusForCells(CellStatus.FORBIDDEN, -1, 1, 1);
+
         sut.getCells()[4][1][1] = CellStatus.FOUR;
-        sut.getCells()[5][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[6][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[7][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[8][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[9][1][1] = CellStatus.FORBIDDEN;
 
         // When
         String cellValue = sut.getCellValue(1, 1);
 
         // Then
-        assertThat(cellValue).isEqualToIgnoringCase(CellStatus.FOUR.name());
+        assertThat(cellValue).isEqualToIgnoringCase(CellStatus.FOUR.getValue().toString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInLine_should_throw_if_value_is_below_1() {
-        sut.isValuePresentInLine(0, 1);
-    }
+    private void givenAStatusForCells(CellStatus status, int value, int x, int y) {
+        for (int i = 0; i < 9; i++){
+            int layer = value < 0 ? i : value;
+            int row = x < 0 ? i : x;
+            int column = y < 0 ? i : y;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInLine_should_throw_if_value_is_over_9() {
-        sut.isValuePresentInLine(10, 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInLine_should_throw_if_x_is_below_0() {
-        sut.isValuePresentInLine(-1, 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInLine_should_throw_if_x_is_over_8() {
-        sut.isValuePresentInLine(1, 9);
-    }
-
-    @Test
-    public void isValuePresentInLine_should_return_false_when_value_is_null() {
-        // Given
-
-        // When
-        boolean present = sut.isValuePresentInLine(null, 1);
-
-        // Then
-        assertThat(present).isFalse();
-    }
-
-    @Test
-    public void isValuePresentInLine_should_return_true_when_present() {
-        // Given
-        sut.getCells()[1][1][0] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][2] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][3] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][4] = CellStatus.ONE;
-        sut.getCells()[1][1][5] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][6] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][7] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][8] = CellStatus.FORBIDDEN;
-
-        // When
-        boolean present = sut.isValuePresentInLine(1, 1);
-
-        // Then
-        assertThat(present).isTrue();
-    }
-
-    @Test
-    public void isValuePresentInLine_should_return_false_when_not_present() {
-        // Given
-        sut.getCells()[1][1][0] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][2] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][3] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][4] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][5] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][6] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][7] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][8] = CellStatus.OCCUPIED;
-
-        // When
-        boolean present = sut.isValuePresentInLine(4, 1);
-
-        // Then
-        assertThat(present).isFalse();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInColumn_should_throw_if_value_is_below_1() {
-        sut.isValuePresentInColumn(0, 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInColumn_should_throw_if_value_is_over_9() {
-        sut.isValuePresentInColumn(10, 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInColumn_should_throw_if_y_is_below_0() {
-        sut.isValuePresentInColumn(1, -1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInColumn_should_throw_if_y_is_over_8() {
-        sut.isValuePresentInColumn(1, 9);
-    }
-
-    @Test
-    public void isValuePresentInColumn_should_return_false_when_value_is_null() {
-        // Given
-
-        // When
-        boolean present = sut.isValuePresentInColumn(null, 1);
-
-        // Then
-        assertThat(present).isFalse();
-    }
-
-    @Test
-    public void isValuePresentInColumn_should_return_true_when_present() {
-        // Given
-        sut.getCells()[1][0][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][2][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][3][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][4][1] = CellStatus.ONE;
-        sut.getCells()[1][5][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][6][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][7][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][8][1] = CellStatus.FORBIDDEN;
-
-        // When
-        boolean present = sut.isValuePresentInColumn(1, 1);
-
-        // Then
-        assertThat(present).isTrue();
-    }
-
-    @Test
-    public void isValuePresentInColumn_should_return_false_when_not_present() {
-        // Given
-        sut.getCells()[1][0][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][2][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][3][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][4][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][5][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][6][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][7][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][8][1] = CellStatus.OCCUPIED;
-
-        // When
-        boolean present = sut.isValuePresentInColumn(4, 2);
-
-        // Then
-        assertThat(present).isFalse();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInQuadrant_should_throw_if_value_is_below_0() {
-        sut.isValuePresentInQuadrant(0, 1, 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInQuadrant_should_throw_if_value_is_over_9() {
-        sut.isValuePresentInQuadrant(10, 1, 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInQuadrant_should_throw_if_x_is_below_0() {
-        sut.isValuePresentInQuadrant(1, -1, 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInQuadrant_should_throw_if_x_is_over_8() {
-        sut.isValuePresentInQuadrant(1, 1, 9);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInQuadrant_should_throw_if_y_is_below_0() {
-        sut.isValuePresentInQuadrant(1, 1, -1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isValuePresentInQuadrant_should_throw_if_y_is_over_8() {
-        sut.isValuePresentInQuadrant(1, 1, 9);
-    }
-
-    @Test
-    public void isValuePresentInQuadrant_should_return_false_when_value_is_null() {
-        // Given
-
-        // When
-        boolean present = sut.isValuePresentInQuadrant(null, 1, 1);
-
-        // Then
-        assertThat(present).isFalse();
-    }
-
-    @Test
-    public void isValuePresentInQuadrant() {
-    }
-
-    @Test
-    public void isValuePresentInQuadrant_should_return_true_when_present() {
-        // Given
-        sut.getCells()[1][0][0] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][0][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][0][2] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][0] = CellStatus.ONE;
-        sut.getCells()[1][1][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][1][2] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][2][0] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][2][1] = CellStatus.FORBIDDEN;
-        sut.getCells()[1][2][2] = CellStatus.FORBIDDEN;
-
-        // When
-        boolean present = sut.isValuePresentInQuadrant(1, 0, 0);
-
-        // Then
-        assertThat(present).isTrue();
-    }
-
-    @Test
-    public void isValuePresentInQuadrant_should_return_false_when_not_present() {
-        // Given
-        sut.getCells()[1][0][0] = CellStatus.OCCUPIED;
-        sut.getCells()[1][0][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][0][2] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][0] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][1][2] = CellStatus.OCCUPIED;
-        sut.getCells()[1][2][0] = CellStatus.OCCUPIED;
-        sut.getCells()[1][2][1] = CellStatus.OCCUPIED;
-        sut.getCells()[1][2][2] = CellStatus.OCCUPIED;
-
-        // When
-        boolean present = sut.isValuePresentInQuadrant(1, 0, 0);
-
-        // Then
-        assertThat(present).isFalse();
+            sut.getCells()[layer][row][column] = status;
+        }
     }
 }

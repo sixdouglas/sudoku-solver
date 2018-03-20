@@ -16,11 +16,19 @@
 
 package org.douglas.sudoku;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class Grid {
 
+    private static final String LINE_SEPARATOR = "+-+-+-+-+-+-+-+-+-+\n";
+    static final int LOWER_BOUND = 0;
+    static final int HIGHER_BOUND = 9;
+    static final int QUADRANT_HIGH_BOUND = 2;
     /**
      * This cell array represent the grid in three dimension.
      * First dimension is the value;
@@ -28,21 +36,38 @@ public class Grid {
      * Third dimension is the Y;
      */
     private CellStatus[][][] cells;
+    private Integer[][] initialValuesCells;
+    private boolean initialisation = true;
 
     public Grid(){
-        cells = new CellStatus[10][9][9];
+        cells = new CellStatus[HIGHER_BOUND][HIGHER_BOUND][HIGHER_BOUND];
 
-        for(int i = 0; i < cells.length; i++){
-            for(int j = 0; j < cells[0].length; j++) {
-                for (int k = 0; k < cells[0][0].length; k++) {
-                    cells[i][j][k] = CellStatus.EMPTY;
-                }
-            }
+        initGrid();
+    }
+
+    static void checkX(int x) {
+        if (x < LOWER_BOUND || x >= HIGHER_BOUND){
+            throw new IllegalArgumentException("'x' must be between 0 and 8 included, but was: " + x);
         }
     }
 
-    public CellStatus[][][] getCells() {
-        return cells;
+    static void checkY(int y) {
+        if (y < LOWER_BOUND || y >= HIGHER_BOUND){
+            throw new IllegalArgumentException("'y' must be between 0 and 8 included, but was: " + y);
+        }
+    }
+
+    static void checkValue(Integer value) {
+        if (value < LOWER_BOUND + 1 || value >= HIGHER_BOUND + 1){
+            throw new IllegalArgumentException("'value' must be between 1 and 9 included or NULL, but was: " + value);
+        }
+    }
+
+    public void initGrid() {
+        IntStream.range(LOWER_BOUND, HIGHER_BOUND).forEach(i ->
+                IntStream.range(LOWER_BOUND, HIGHER_BOUND).forEach(j ->
+                        IntStream.range(LOWER_BOUND, HIGHER_BOUND).forEach(k ->
+                                cells[i][j][k] = CellStatus.EMPTY)));
     }
 
     public void setCellValue(int x, int y, Integer value){
@@ -50,31 +75,25 @@ public class Grid {
             return;
         }
 
-        if (value < 1 || value > 9){
-            throw new IllegalArgumentException("'value' must be between 1 and 9 included or NULL");
+        checkValue(value);
+
+        checkX(x);
+
+        checkY(y);
+
+        if (cells[value - 1][x][y] == CellStatus.FORBIDDEN){
+            throw new IllegalArgumentException("Cell value ["+value+"] impossible here ["+x+","+y+"]");
         }
 
-        if (x < 0 || x > 8){
-            throw new IllegalArgumentException("'x' must be between 0 and 8 included");
-        }
-
-        if (y < 0 || y > 8){
-            throw new IllegalArgumentException("'y' must be between 0 and 8 included");
-        }
-
-        if (cells[value][x][y] == CellStatus.FORBIDDEN){
-            throw new IllegalArgumentException("Cell value impossible");
-        }
-
-        if (cells[value][x][y] == CellStatus.OCCUPIED){
-            throw new IllegalArgumentException("Another value has been set here");
+        if (cells[value - 1][x][y] == CellStatus.OCCUPIED){
+            throw new IllegalArgumentException("Another value has been set here here ["+x+","+y+"]");
         }
 
         // Going through all values layers to set the Cell value when
         // on the right value layer and set it as Occupied on the other layers
-        for (int i = 1; i < 10; i++) {
-            if (value == i) {
-                setCellStatus(i, x, y, CellStatus.getCellStatus(i));
+        for (int i = LOWER_BOUND; i < HIGHER_BOUND; i++) {
+            if (value - 1 == i) {
+                setCellStatus(i, x, y, CellStatus.getCellStatus(value));
                 // Set the full line, row and quadrant as Forbidden for this layer value.
                 fillLineAsForbidden(i, x, y);
                 fillRowAsForbidden(i, x, y);
@@ -85,22 +104,115 @@ public class Grid {
         }
     }
 
-    private void setCellStatus(int i, int x, int y, CellStatus cellStatus) {
-        cells[i][x][y] = cellStatus;
+    public void stopInitialisation(){
+        initialisation = false;
     }
 
-    private void fillLineAsForbidden(int i, int x, int y) {
-        for (int cpt = 0; cpt < 9; cpt++){
+    public String getCellValue(int x, int y) {
+
+        checkX(x);
+
+        checkY(y);
+
+        String value = StringUtils.SPACE;
+        for (int i = 0; i < HIGHER_BOUND; i++){
+            if (cells[i][x][y] != CellStatus.OCCUPIED && cells[i][x][y] != CellStatus.EMPTY  && cells[i][x][y] != CellStatus.FORBIDDEN){
+                value = cells[i][x][y].getValue().toString();
+            }
+        }
+
+        return value;
+    }
+
+    public Iterable<String> getCellPossibleValues(int x, int y) {
+
+        checkX(x);
+
+        checkY(y);
+
+        List<String> possibleValues = new ArrayList<>();
+        for (int i = 0; i < HIGHER_BOUND; i++){
+            if (cells[i][x][y] == CellStatus.EMPTY){
+                possibleValues.add(String.valueOf(i + 1));
+            }
+        }
+
+        return possibleValues;
+    }
+
+    public String gridToString() {
+        StringBuilder sb = new StringBuilder(LINE_SEPARATOR);
+
+        for (int x = LOWER_BOUND; x < HIGHER_BOUND; x++){
+            for (int y = LOWER_BOUND; y < HIGHER_BOUND; y++) {
+                sb.append("+").append(getCellValue(x, y));
+            }
+            sb.append("+\n").append(LINE_SEPARATOR);
+        }
+
+        return sb.toString();
+    }
+
+    CellStatus[][][] getCells() {
+        return cells;
+    }
+
+    Pair<Integer, Integer> findQuadrant(int x, int y) {
+
+        checkX(x);
+
+        checkY(y);
+
+        int quadrantX;
+        int quadrantY;
+
+        switch (x) {
+            case 0:
+            case 1:
+            case QUADRANT_HIGH_BOUND:
+                quadrantX = 0;
+                break;
+            case 3:
+            case 4:
+            case 5:
+                quadrantX = 1;
+                break;
+            default:
+                quadrantX = QUADRANT_HIGH_BOUND;
+                break;
+        }
+
+        switch (y) {
+            case 0:
+            case 1:
+            case QUADRANT_HIGH_BOUND:
+                quadrantY = 0;
+                break;
+            case 3:
+            case 4:
+            case 5:
+                quadrantY = 1;
+                break;
+            default:
+                quadrantY = QUADRANT_HIGH_BOUND;
+                break;
+        }
+
+        return Pair.of(quadrantX, quadrantY);
+    }
+
+    private void fillLineAsForbidden(int layer, int x, int y) {
+        for (int cpt = LOWER_BOUND; cpt < HIGHER_BOUND; cpt++){
             if (cpt != y){
-                setCellStatus(i, x, cpt, CellStatus.FORBIDDEN);
+                setCellStatus(layer, x, cpt, CellStatus.FORBIDDEN);
             }
         }
     }
 
-    private void fillRowAsForbidden(int i, int x, int y) {
-        for (int cpt = 0; cpt < 9; cpt++){
+    private void fillRowAsForbidden(int layer, int x, int y) {
+        for (int cpt = LOWER_BOUND; cpt < HIGHER_BOUND; cpt++){
             if (cpt != x){
-                setCellStatus(i, cpt, y, CellStatus.FORBIDDEN);
+                setCellStatus(layer, cpt, y, CellStatus.FORBIDDEN);
             }
         }
     }
@@ -111,155 +223,21 @@ public class Grid {
         int quadrantX = quadrant.getLeft();
         int quadrantY = quadrant.getRight();
 
-        for (int cptX = 0; cptX < 3; cptX++){
-            for (int cptY = 0; cptY < 3; cptY++){
-                if (cptX != x && cptY != y) {
+        for (int cptX = LOWER_BOUND; cptX < 3; cptX++){
+            for (int cptY = LOWER_BOUND; cptY < 3; cptY++){
+                if ((cptX + (3 * quadrantX)) != x && (cptY + (3 * quadrantY)) != y) {
                     setCellStatus(i, cptX + (3 * quadrantX), cptY + (3 * quadrantY), CellStatus.FORBIDDEN);
                 }
             }
         }
     }
 
-    public Pair<Integer, Integer> findQuadrant(int x, int y) {
-
-        if (x < 0 || x > 8){
-            throw new IllegalArgumentException("'x' must be between 0 and 8 included");
-        }
-
-        if (y < 0 || y > 8){
-            throw new IllegalArgumentException("'y' must be between 0 and 8 included");
-        }
-
-        int quadrantX;
-        int quadrantY;
-
-        switch (x) {
-            case 0:
-            case 1:
-            case 2:
-                quadrantX = 0;
-                break;
-            case 3:
-            case 4:
-            case 5:
-                quadrantX = 1;
-                break;
-            default:
-                quadrantX = 2;
-                break;
-        }
-
-        switch (y) {
-            case 0:
-            case 1:
-            case 2:
-                quadrantY = 0;
-                break;
-            case 3:
-            case 4:
-            case 5:
-                quadrantY = 1;
-                break;
-            default:
-                quadrantY = 2;
-                break;
-        }
-
-        return Pair.of(quadrantX, quadrantY);
-    }
-
-    public String getCellValue(int x, int y) {
-
-        if (x < 0 || x > 8){
-            throw new IllegalArgumentException("'x' must be between 0 and 8 included");
-        }
-
-        if (y < 0 || y > 8){
-            throw new IllegalArgumentException("'y' must be between 0 and 8 included");
-        }
-
-        String value = StringUtils.SPACE;
-        for (int i = 1; i < 10; i++){
-            if (cells[i][x][y] != CellStatus.OCCUPIED && cells[i][x][y] != CellStatus.EMPTY  && cells[i][x][y] != CellStatus.FORBIDDEN){
-                value = cells[i][x][y].name();
+    private void setCellStatus(int layer, int x, int y, CellStatus cellStatus) {
+        if (cells[layer][x][y] != cellStatus && cells[layer][x][y] != CellStatus.OCCUPIED) {
+            cells[layer][x][y] = cellStatus;
+            if (initialisation){
+                initialValuesCells[x][y] = layer;
             }
         }
-
-        return value;
-    }
-
-    public boolean isValuePresentInLine(Integer value, int x){
-
-        if (value == null){
-            return false;
-        }
-
-        if (value < 1 || value > 9){
-            throw new IllegalArgumentException("'value' must be between 1 and 9 included or NULL");
-        }
-
-        if (x < 0 || x > 8){
-            throw new IllegalArgumentException("'x' must be between 0 and 8 included");
-        }
-
-        for (int y = 0; y < 9; y++){
-            if (cells[value][x][y] == CellStatus.getCellStatus(value)){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean isValuePresentInColumn(Integer value, int y){
-
-        if (value == null){
-            return false;
-        }
-
-        if (value < 1 || value > 9){
-            throw new IllegalArgumentException("'value' must be between 1 and 9 included or NULL");
-        }
-
-        if (y < 0 || y > 8){
-            throw new IllegalArgumentException("'y' must be between 0 and 8 included");
-        }
-
-        for (int x = 0; x < 9; x++){
-            if (cells[value][x][y] == CellStatus.getCellStatus(value)){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean isValuePresentInQuadrant(Integer value, int quadrantX, int quadrantY){
-
-        if (value == null){
-            return false;
-        }
-
-        if (value < 1 || value > 9){
-            throw new IllegalArgumentException("'value' must be between 1 and 9 included or NULL");
-        }
-
-        if (quadrantX < 0 || quadrantX > 2){
-            throw new IllegalArgumentException("'quadrantX' must be between 0 and 2 included");
-        }
-
-        if (quadrantY < 0 || quadrantY > 2){
-            throw new IllegalArgumentException("'quadrantY' must be between 0 and 2 included");
-        }
-
-        for (int cptX = 0; cptX < 2; cptX++){
-            for (int cptY = 0; cptY < 2; cptY++){
-                if (cells[value][cptX + (3 * quadrantX)][cptY + (3 * quadrantY)] == CellStatus.getCellStatus(value)){
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }
