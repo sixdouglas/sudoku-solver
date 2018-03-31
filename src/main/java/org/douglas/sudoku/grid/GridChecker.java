@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku;
+package org.douglas.sudoku.grid;
 
-import static org.douglas.sudoku.Grid.*;
+import static org.douglas.sudoku.grid.Grid.*;
 
 public class GridChecker {
     private final Grid grid;
 
-    public GridChecker(Grid grid){
+    GridChecker(Grid grid) {
         this.grid = grid;
     }
 

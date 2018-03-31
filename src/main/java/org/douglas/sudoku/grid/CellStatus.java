@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku;
+package org.douglas.sudoku.grid;
 
 public enum CellStatus {
     EMPTY(null),
@@ -32,7 +32,7 @@ public enum CellStatus {
 
     private Integer value;
 
-    private CellStatus(Integer value){
+    CellStatus(Integer value) {
         this.value = value;
     }
 
