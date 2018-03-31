@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku;
+package org.douglas.sudoku.grid;
 
 public final class GridInitializer {
 

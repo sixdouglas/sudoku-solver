@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku;
+package org.douglas.sudoku.grid;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class GridCheckerTest {
     private GridChecker sut;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         grid = new Grid();
         sut = new GridChecker(grid);
     }

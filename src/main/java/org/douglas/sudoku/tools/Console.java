@@ -17,6 +17,9 @@
 package org.douglas.sudoku.tools;
 
 public class Console {
+
+    private static final String PRE_FORMATED = (char) 27 + "[%dm%s" + (char) 27 + "[%dm";
+
     /*
     *
         +~~~~~~+~~~~~~+~~~~~~~~~~~+
@@ -35,8 +38,8 @@ public class Console {
     *
     * */
 
-    public enum Colors{
-
+    public static String getColoredString(String value, Colors color) {
+        return String.format(PRE_FORMATED, color.getForeground(), value, Colors.DEFAULT.getBackground());
     }
 
 }

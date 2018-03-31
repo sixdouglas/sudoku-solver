@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
+package org.douglas.sudoku.grid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.douglas.sudoku.tools.Colors;
+import org.douglas.sudoku.tools.Console;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class Grid {
 
-    private static final String LINE_SEPARATOR = "+-+-+-+-+-+-+-+-+-+\n";
+    private static final String LINE_SEPARATOR = "\n+---+---+---+---+---+---+---+---+---+\n";
     static final int LOWER_BOUND = 0;
     static final int HIGHER_BOUND = 9;
     static final int QUADRANT_HIGH_BOUND = 2;
@@ -41,6 +44,7 @@ public class Grid {
 
     public Grid(){
         cells = new CellStatus[HIGHER_BOUND][HIGHER_BOUND][HIGHER_BOUND];
+        initialValuesCells = new Integer[HIGHER_BOUND][HIGHER_BOUND];
 
         initGrid();
     }
@@ -63,11 +67,18 @@ public class Grid {
         }
     }
 
-    public void initGrid() {
-        IntStream.range(LOWER_BOUND, HIGHER_BOUND).forEach(i ->
-                IntStream.range(LOWER_BOUND, HIGHER_BOUND).forEach(j ->
-                        IntStream.range(LOWER_BOUND, HIGHER_BOUND).forEach(k ->
-                                cells[i][j][k] = CellStatus.EMPTY)));
+    private void initGrid() {
+        IntStream.range(LOWER_BOUND, HIGHER_BOUND).forEach(layer ->
+                IntStream.range(LOWER_BOUND, HIGHER_BOUND).forEach(x ->
+                        IntStream.range(LOWER_BOUND, HIGHER_BOUND).forEach(y -> {
+                                    cells[layer][x][y] = CellStatus.EMPTY;
+                                    initialValuesCells[x][y] = 0;
+                                }
+                        )
+                )
+        );
+
+        initialisation = true;
     }
 
     public void setCellValue(int x, int y, Integer value){
@@ -124,7 +135,25 @@ public class Grid {
         return value;
     }
 
-    public Iterable<String> getCellPossibleValues(int x, int y) {
+    public boolean isGridFinished() {
+        boolean gridFinished = true;
+
+        for (int x = LOWER_BOUND; x < HIGHER_BOUND; x++) {
+            for (int y = LOWER_BOUND; y < HIGHER_BOUND; y++) {
+                if (StringUtils.SPACE.equals(getCellValue(x, y))) {
+                    gridFinished = false;
+                    break;
+                }
+            }
+            if (!gridFinished) {
+                break;
+            }
+        }
+
+        return gridFinished;
+    }
+
+    public Collection<String> getCellPossibleValues(int x, int y) {
 
         checkX(x);
 
@@ -145,9 +174,13 @@ public class Grid {
 
         for (int x = LOWER_BOUND; x < HIGHER_BOUND; x++){
             for (int y = LOWER_BOUND; y < HIGHER_BOUND; y++) {
-                sb.append("+").append(getCellValue(x, y));
+                Colors currentColor = Colors.DEFAULT;
+                if (isInitialValue(x, y)) {
+                    currentColor = Colors.RED;
+                }
+                sb.append("+ ").append(Console.getColoredString(getCellValue(x, y), currentColor)).append(StringUtils.SPACE);
             }
-            sb.append("+\n").append(LINE_SEPARATOR);
+            sb.append("+").append(LINE_SEPARATOR);
         }
 
         return sb.toString();
@@ -235,9 +268,13 @@ public class Grid {
     private void setCellStatus(int layer, int x, int y, CellStatus cellStatus) {
         if (cells[layer][x][y] != cellStatus && cells[layer][x][y] != CellStatus.OCCUPIED) {
             cells[layer][x][y] = cellStatus;
-            if (initialisation){
-                initialValuesCells[x][y] = layer;
+            if (initialisation && cellStatus != CellStatus.FORBIDDEN && cellStatus != CellStatus.OCCUPIED && cellStatus != CellStatus.EMPTY) {
+                initialValuesCells[x][y] = cellStatus.getValue();
             }
         }
+    }
+
+    public boolean isInitialValue(int x, int y) {
+        return (initialValuesCells[x][y] != 0);
     }
 }
