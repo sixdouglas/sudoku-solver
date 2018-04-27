@@ -6,11 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
+        <Logger name="org.douglas.sudoku" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Root level="error">
             <AppenderRef ref="Console"/>
         </Root>
-        <Logger name="org.douglas.sudoku" level="info">
-            <AppenderRef ref="Console"/>
-        </Logger>
     </Loggers>
 </Configuration>

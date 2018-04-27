@@ -14,35 +14,21 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku.tools;
+package org.douglas.sudoku.grid;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Douglas SIX
  */
-public enum Colors {
-    BLACK(30, 40),
-    RED(31, 41),
-    GREEN(32, 42),
-    YELLOW(33, 43),
-    BLUE(34, 44),
-    MAGENTA(35, 45),
-    CYAN(36, 46),
-    WHITE(37, 47),
-    DEFAULT(39, 49);
+public class GridSolverTest {
 
-    private int foreground;
-    private int background;
-
-    Colors(int foreground, int background) {
-        this.foreground = foreground;
-        this.background = background;
+    @Before
+    public void setUp() throws Exception {
     }
 
-    public int getForeground() {
-        return foreground;
-    }
-
-    public int getBackground() {
-        return background;
+    @Test
+    public void run() {
     }
 }

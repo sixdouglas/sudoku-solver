@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,20 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.time.StopWatch;
 import org.douglas.sudoku.grid.Grid;
 import org.douglas.sudoku.grid.GridSolver;
+import org.douglas.sudoku.grid.Gui;
 
+import javax.swing.*;
+
+import static javax.swing.SwingUtilities.invokeLater;
+
+/**
+ * @author Douglas SIX
+ */
 @Log4j2
 public class Application implements Runnable {
 
     private Grid grid;
+    private Gui gui;
 
     private Application(){
         this.grid = new Grid();
@@ -37,16 +46,42 @@ public class Application implements Runnable {
 
     @Override
     public void run() {
-        initFirstGrid(grid);
+        initThirdGrid(grid);
         log.info(grid.gridToString());
+
+//        invokeLater(() -> createAndShowGUI(grid));
+
         GridSolver solver = new GridSolver(grid);
         StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        solver.run();
-        stopWatch.stop();
+        try {
+            stopWatch.start();
+            solver.run();
+            stopWatch.stop();
+        } catch (IllegalArgumentException exc) {
+            log.error(exc.getMessage());
+        }
+
         log.info(stopWatch.toString());
         log.info(grid.gridToString());
+
+        invokeLater(() -> createAndShowGUI(grid));
     }
+
+    private void createAndShowGUI(Grid grid) {
+        //Create and set up the window.
+        JFrame frame = new JFrame("BorderDemo");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //Create and set up the content pane.
+        Gui newContentPane = new Gui(grid);
+        newContentPane.setOpaque(true); //content panes must be opaque
+        frame.setContentPane(newContentPane);
+
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
+    }
+
 
     private void initEasyGrid(Grid grid) {
         grid.setCellValue(0, 0, 5);
@@ -232,6 +267,49 @@ public class Application implements Runnable {
         grid.setCellValue(8, 6, 4);
 //        grid.setCellValue(8, 7, 7);
 //        grid.setCellValue(8, 8, 9);
+
+        grid.stopInitialisation();
+    }
+
+    private void initThirdGrid(Grid grid) {
+        grid.setCellValue(0, 1, 4);
+
+        grid.setCellValue(1, 0, 8);
+        grid.setCellValue(1, 5, 4);
+        grid.setCellValue(1, 6, 5);
+        grid.setCellValue(1, 8, 7);
+
+        grid.setCellValue(2, 0, 6);
+        grid.setCellValue(2, 1, 7);
+        grid.setCellValue(2, 2, 2);
+        grid.setCellValue(2, 5, 3);
+        grid.setCellValue(2, 6, 8);
+        grid.setCellValue(2, 7, 9);
+
+        grid.setCellValue(3, 6, 3);
+
+        grid.setCellValue(4, 0, 3);
+        grid.setCellValue(4, 1, 9);
+        grid.setCellValue(4, 7, 7);
+
+        grid.setCellValue(5, 1, 8);
+        grid.setCellValue(5, 2, 4);
+        grid.setCellValue(5, 3, 3);
+        grid.setCellValue(5, 4, 7);
+        grid.setCellValue(5, 5, 5);
+        grid.setCellValue(5, 7, 1);
+
+        grid.setCellValue(6, 2, 5);
+        grid.setCellValue(6, 4, 9);
+        grid.setCellValue(6, 5, 6);
+        grid.setCellValue(6, 8, 8);
+
+        grid.setCellValue(7, 0, 7);
+        grid.setCellValue(7, 4, 1);
+        grid.setCellValue(7, 6, 2);
+
+        grid.setCellValue(8, 2, 8);
+        grid.setCellValue(8, 7, 5);
 
         grid.stopInitialisation();
     }
