@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@ package org.douglas.sudoku.grid;
 
 import static org.douglas.sudoku.grid.Grid.*;
 
+/**
+ * @author Douglas SIX
+ */
 public class GridChecker {
     private final Grid grid;
 
@@ -71,16 +74,16 @@ public class GridChecker {
 
         checkValue(value);
 
-        if (quadrantX < LOWER_BOUND || quadrantX > QUADRANT_HIGH_BOUND){
+        if (quadrantX < QUADRANT_LOW_BOUND || quadrantX > QUADRANT_HIGH_BOUND) {
             throw new IllegalArgumentException("'quadrantX' must be between 0 and 2 included");
         }
 
-        if (quadrantY < LOWER_BOUND || quadrantY > QUADRANT_HIGH_BOUND){
+        if (quadrantY < QUADRANT_LOW_BOUND || quadrantY > QUADRANT_HIGH_BOUND) {
             throw new IllegalArgumentException("'quadrantY' must be between 0 and 2 included");
         }
 
-        for (int cptX = LOWER_BOUND; cptX < QUADRANT_HIGH_BOUND; cptX++){
-            for (int cptY = LOWER_BOUND; cptY < QUADRANT_HIGH_BOUND; cptY++){
+        for (int cptX = QUADRANT_LOW_BOUND; cptX < QUADRANT_HIGH_BOUND; cptX++) {
+            for (int cptY = QUADRANT_LOW_BOUND; cptY < QUADRANT_HIGH_BOUND; cptY++) {
                 if (grid.getCells()[value][cptX + (3 * quadrantX)][cptY + (3 * quadrantY)] == CellStatus.getCellStatus(value)){
                     return true;
                 }

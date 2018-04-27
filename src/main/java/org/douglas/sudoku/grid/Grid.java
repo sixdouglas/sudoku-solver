@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
 
+/**
+ * @author Douglas SIX
+ */
 public class Grid {
 
     private static final String LINE_SEPARATOR = "\n+---+---+---+---+---+---+---+---+---+\n";
     static final int LOWER_BOUND = 0;
     static final int HIGHER_BOUND = 9;
+    static final int QUADRANT_LOW_BOUND = 0;
     static final int QUADRANT_HIGH_BOUND = 2;
     /**
      * This cell array represent the grid in three dimension.
@@ -97,7 +101,7 @@ public class Grid {
         }
 
         if (cells[value - 1][x][y] == CellStatus.OCCUPIED){
-            throw new IllegalArgumentException("Another value has been set here here ["+x+","+y+"]");
+            throw new IllegalArgumentException("Another value has been set here here [" + x + "," + y + "], cell value: [" + getCellValue(x, y) + "], tried value: [" + value + "]");
         }
 
         // Going through all values layers to set the Cell value when
@@ -133,6 +137,31 @@ public class Grid {
         }
 
         return value;
+    }
+
+    public Integer getValue(int x, int y) {
+
+        checkX(x);
+
+        checkY(y);
+
+        Integer value = Integer.MIN_VALUE;
+        for (int i = 0; i < HIGHER_BOUND; i++) {
+            if (cells[i][x][y] != CellStatus.OCCUPIED && cells[i][x][y] != CellStatus.EMPTY && cells[i][x][y] != CellStatus.FORBIDDEN) {
+                value = cells[i][x][y].getValue();
+            }
+        }
+
+        return value;
+    }
+
+    public boolean isValueSet(int x, int y) {
+
+        checkX(x);
+
+        checkY(y);
+
+        return Integer.MIN_VALUE != getValue(x, y);
     }
 
     public boolean isGridFinished() {
@@ -190,7 +219,7 @@ public class Grid {
         return cells;
     }
 
-    Pair<Integer, Integer> findQuadrant(int x, int y) {
+    public Pair<Integer, Integer> findQuadrant(int x, int y) {
 
         checkX(x);
 
