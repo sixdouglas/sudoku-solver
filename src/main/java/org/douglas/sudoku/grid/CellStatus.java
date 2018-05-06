@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku;
+package org.douglas.sudoku.grid;
 
+/**
+ * @author Douglas SIX
+ */
 public enum CellStatus {
     EMPTY(null),
     OCCUPIED(Integer.MAX_VALUE),
@@ -32,7 +35,7 @@ public enum CellStatus {
 
     private Integer value;
 
-    private CellStatus(Integer value){
+    CellStatus(Integer value) {
         this.value = value;
     }
 
