@@ -17,10 +17,8 @@
 package org.douglas.sudoku;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.time.StopWatch;
 import org.douglas.sudoku.grid.Grid;
-import org.douglas.sudoku.grid.GridSolver;
-import org.douglas.sudoku.grid.Gui;
+import org.douglas.sudoku.grid.MainGui;
 
 import javax.swing.*;
 
@@ -32,11 +30,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 @Log4j2
 public class Application implements Runnable {
 
-    private Grid grid;
-    private Gui gui;
-
     private Application(){
-        this.grid = new Grid();
     }
 
     public static void main(String[] args) {
@@ -46,39 +40,12 @@ public class Application implements Runnable {
 
     @Override
     public void run() {
-        initThirdGrid(grid);
-        log.info(grid.gridToString());
-
-//        invokeLater(() -> createAndShowGUI(grid));
-
-        GridSolver solver = new GridSolver(grid);
-        StopWatch stopWatch = new StopWatch();
-        try {
-            stopWatch.start();
-            solver.run();
-            stopWatch.stop();
-        } catch (IllegalArgumentException exc) {
-            log.error(exc.getMessage());
-        }
-
-        log.info(stopWatch.toString());
-        log.info(grid.gridToString());
-
-        invokeLater(() -> createAndShowGUI(grid));
+        invokeLater(this::createAndShowGUI);
     }
 
-    private void createAndShowGUI(Grid grid) {
+    private void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("BorderDemo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //Create and set up the content pane.
-        Gui newContentPane = new Gui(grid);
-        newContentPane.setOpaque(true); //content panes must be opaque
-        frame.setContentPane(newContentPane);
-
-        //Display the window.
-        frame.pack();
+        JFrame frame = new MainGui();
         frame.setVisible(true);
     }
 
