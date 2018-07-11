@@ -19,7 +19,7 @@ package org.douglas.sudoku.grid;
 /**
  * @author Douglas SIX
  */
-public enum CellStatus {
+enum CellStatus {
     EMPTY(null),
     OCCUPIED(Integer.MAX_VALUE),
     FORBIDDEN(Integer.MIN_VALUE),

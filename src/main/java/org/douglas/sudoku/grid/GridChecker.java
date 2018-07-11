@@ -21,7 +21,7 @@ import static org.douglas.sudoku.grid.Grid.*;
 /**
  * @author Douglas SIX
  */
-public class GridChecker {
+final class GridChecker {
     private final Grid grid;
 
     GridChecker(Grid grid) {

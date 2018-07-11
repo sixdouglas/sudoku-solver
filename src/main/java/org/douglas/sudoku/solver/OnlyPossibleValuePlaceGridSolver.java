@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku.grid;
+package org.douglas.sudoku.solver;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
+import org.douglas.sudoku.grid.Grid;
 
 import java.util.Collection;
 
@@ -28,79 +29,17 @@ import static org.douglas.sudoku.grid.Grid.LOWER_BOUND;
  * @author Douglas SIX
  */
 @Log4j2
-public class GridSolver implements Runnable {
-    private final Grid gridToSolve;
-
-    public GridSolver(Grid grid) {
-        this.gridToSolve = grid;
-    }
+final class OnlyPossibleValuePlaceGridSolver extends GridSolver {
 
     @Override
-    public void run() {
-        int count = 0;
-        boolean solutionFound = true;
-
-        while (!gridToSolve.isGridFinished() && solutionFound && count < 20) {
-            solutionFound = false;
-
-            for (int x = LOWER_BOUND; x < HIGHER_BOUND; x++) {
-                for (int y = LOWER_BOUND; y < HIGHER_BOUND; y++) {
-                    if (!gridToSolve.isInitialValue(x, y)
-                            && !gridToSolve.isValueSet(x, y)
-                            && findSolution(x, y)) {
-                        solutionFound = true;
-                    }
-                }
-            }
-
-            count++;
-
-            log.debug("count " + count);
-        }
-
-        count = 0;
-        solutionFound = true;
-
-        while (!gridToSolve.isGridFinished() && solutionFound && count < 20) {
-            solutionFound = false;
-
-            for (int x = LOWER_BOUND; x < HIGHER_BOUND; x++) {
-                for (int y = LOWER_BOUND; y < HIGHER_BOUND; y++) {
-                    if (!gridToSolve.isInitialValue(x, y)
-                            && !gridToSolve.isValueSet(x, y)
-                            && findOnlyPossibleSolution(x, y)) {
-                        solutionFound = true;
-                    }
-                }
-            }
-
-            count++;
-
-            log.debug("possibleCount " + count);
-        }
-    }
-
-    private boolean findSolution(int x, int y) {
-        Collection<String> cellPossibleValues = gridToSolve.getCellPossibleValues(x, y);
-
-        if (cellPossibleValues.size() == 1) {
-            Integer value = Integer.valueOf(cellPossibleValues.iterator().next());
-            log.trace(String.format("unique value found:   X: %s, Y: %s, Value: %d", x, y, value));
-            gridToSolve.setCellValue(x, y, value);
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean findOnlyPossibleSolution(int x, int y) {
+    protected boolean findSolution(Grid gridToSolve, int x, int y) {
         Collection<String> cellPossibleValues = gridToSolve.getCellPossibleValues(x, y);
 
         for (String possibleValue : cellPossibleValues) {
             Integer value = Integer.valueOf(possibleValue);
-            if (isOnlyPossibleValueInLine(value, x, y)
-                    || isOnlyPossibleValueInColumn(value, x, y)
-                    || isOnlyPossiblePlaceInQuadrant(value, x, y)) {
+            if (isOnlyPossibleValueInLine(gridToSolve, value, x, y)
+                    || isOnlyPossibleValueInColumn(gridToSolve, value, x, y)
+                    || isOnlyPossiblePlaceInQuadrant(gridToSolve, value, x, y)) {
                 log.debug(String.format("possible value found: X: %s, Y: %s, Value: %d", x, y, value));
                 gridToSolve.setCellValue(x, y, value);
                 return true;
@@ -109,8 +48,7 @@ public class GridSolver implements Runnable {
         return false;
     }
 
-    private boolean isOnlyPossibleValueInLine(Integer value, int x, int y) {
-
+    private boolean isOnlyPossibleValueInLine(Grid gridToSolve, Integer value, int x, int y) {
         // Check on the same line
         for (int lineIndex = LOWER_BOUND; lineIndex < HIGHER_BOUND; lineIndex++) {
             if (lineIndex == x) {
@@ -127,7 +65,7 @@ public class GridSolver implements Runnable {
         return true;
     }
 
-    private boolean isOnlyPossibleValueInColumn(Integer value, int x, int y) {
+    private boolean isOnlyPossibleValueInColumn(Grid gridToSolve, Integer value, int x, int y) {
         // Check on the same line
         for (int columnIndex = LOWER_BOUND; columnIndex < HIGHER_BOUND; columnIndex++) {
             if (columnIndex == y) {
@@ -144,8 +82,7 @@ public class GridSolver implements Runnable {
         return true;
     }
 
-    private boolean isOnlyPossiblePlaceInQuadrant(Integer value, int x, int y) {
-
+    private boolean isOnlyPossiblePlaceInQuadrant(Grid gridToSolve, Integer value, int x, int y) {
         // Check on the same quadrant
         Pair<Integer, Integer> quadrant = gridToSolve.findQuadrant(x, y);
 
