@@ -1,3 +1,8 @@
 = Sudoku Solver
 
 This is a personal project to solve automatically Sudoku puzzles.
+
+This program is built on a Grid. This grid has multiple layers.
+One layer per number.
+
+Every time a number is entered the corresponding layer is updated.

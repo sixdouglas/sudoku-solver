@@ -14,37 +14,11 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku;
-
-import lombok.extern.log4j.Log4j2;
-import org.douglas.sudoku.gui.MainGui;
-
-import javax.swing.*;
-
-import static javax.swing.SwingUtilities.invokeLater;
+package org.douglas.sudoku.gui;
 
 /**
  * @author Douglas SIX
  */
-@Log4j2
-public final class Application implements Runnable {
-
-    private Application(){
-    }
-
-    public static void main(String[] args) {
-        Application app = new Application();
-        app.run();
-    }
-
-    @Override
-    public void run() {
-        invokeLater(this::createAndShowGUI);
-    }
-
-    private void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new MainGui();
-        frame.setVisible(true);
-    }
+public interface InitializationListener {
+    void initializationDone();
 }

@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku.grid;
-
-import org.junit.Before;
-import org.junit.Test;
+package org.douglas.sudoku.gui;
 
 /**
  * @author Douglas SIX
  */
-public class GridSolverTest {
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @Test
-    public void run() {
-    }
+public interface ResetListener {
+    void resetDone();
 }

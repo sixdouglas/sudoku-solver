@@ -19,7 +19,7 @@ package org.douglas.sudoku.tools;
 /**
  * @author Douglas SIX
  */
-public class Console {
+public final class Console {
 
     private static final String PRE_FORMATED = (char) 27 + "[%dm%s" + (char) 27 + "[%dm";
 

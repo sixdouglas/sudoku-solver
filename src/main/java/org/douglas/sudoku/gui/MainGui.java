@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku.grid;
+package org.douglas.sudoku.gui;
 
 import lombok.extern.log4j.Log4j2;
+import org.douglas.sudoku.grid.Grid;
+import org.douglas.sudoku.solver.GridSolverEngine;
 
 import javax.swing.*;
 
+/**
+ * @author Douglas SIX
+ */
 @Log4j2
-public class MainGui extends JFrame implements InitializationListener {
+public final class MainGui extends JFrame implements InitializationListener, ResetListener {
     private Grid grid;
 
     public MainGui() {
         super("Sudoku Solver");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        doInit();
+    }
 
+    private void doInit() {
         //Create and set up the content pane.
         this.grid = new Grid();
         EmptyGui newContentPane = new EmptyGui(grid);
@@ -43,12 +51,19 @@ public class MainGui extends JFrame implements InitializationListener {
 
     @Override
     public void initializationDone() {
-        GridSolver solver = new GridSolver(grid);
+        GridSolverEngine solver = new GridSolverEngine(grid);
         solver.run();
-        Gui gui = new Gui(grid);
-        setContentPane(gui);
+        SolvedGui solvedGui = new SolvedGui(grid);
+        solvedGui.addListener(this);
+        setContentPane(solvedGui);
+
         //Display the window.
         pack();
         setSize(500, 500);
+    }
+
+    @Override
+    public void resetDone() {
+        doInit();
     }
 }

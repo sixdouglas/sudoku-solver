@@ -14,37 +14,31 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku;
+package org.douglas.sudoku.solver;
 
-import lombok.extern.log4j.Log4j2;
-import org.douglas.sudoku.gui.MainGui;
+import org.douglas.sudoku.grid.Grid;
 
-import javax.swing.*;
-
-import static javax.swing.SwingUtilities.invokeLater;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Douglas SIX
  */
-@Log4j2
-public final class Application implements Runnable {
+public final class GridSolverEngine implements Runnable {
 
-    private Application(){
-    }
+    private Grid gridToSolve;
 
-    public static void main(String[] args) {
-        Application app = new Application();
-        app.run();
+    private List<GridSolver> gridSolvers;
+
+    public GridSolverEngine(Grid gridToSolve){
+        this.gridToSolve = gridToSolve;
+        this.gridSolvers = new ArrayList<>();
+        this.gridSolvers.add(new OnlyPossibleValueGridSolver());
+        this.gridSolvers.add(new OnlyPossibleValuePlaceGridSolver());
     }
 
     @Override
     public void run() {
-        invokeLater(this::createAndShowGUI);
-    }
-
-    private void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new MainGui();
-        frame.setVisible(true);
+        gridSolvers.forEach(gridSolver -> gridSolver.solve(gridToSolve));
     }
 }

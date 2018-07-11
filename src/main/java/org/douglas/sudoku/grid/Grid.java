@@ -29,13 +29,13 @@ import java.util.stream.IntStream;
 /**
  * @author Douglas SIX
  */
-public class Grid {
+public final class Grid implements Cloneable {
 
     private static final String LINE_SEPARATOR = "\n+---+---+---+---+---+---+---+---+---+\n";
-    static final int LOWER_BOUND = 0;
-    static final int HIGHER_BOUND = 9;
-    static final int QUADRANT_LOW_BOUND = 0;
-    static final int QUADRANT_HIGH_BOUND = 2;
+    public static final int LOWER_BOUND = 0;
+    public static final int HIGHER_BOUND = 9;
+    public static final int QUADRANT_LOW_BOUND = 0;
+    public static final int QUADRANT_HIGH_BOUND = 2;
     /**
      * This cell array represent the grid in three dimension.
      * First dimension is the value;
@@ -106,15 +106,15 @@ public class Grid {
 
         // Going through all values layers to set the Cell value when
         // on the right value layer and set it as Occupied on the other layers
-        for (int i = LOWER_BOUND; i < HIGHER_BOUND; i++) {
-            if (value - 1 == i) {
-                setCellStatus(i, x, y, CellStatus.getCellStatus(value));
+        for (int layer = LOWER_BOUND; layer < HIGHER_BOUND; layer++) {
+            if (value - 1 == layer) {
+                setCellStatus(layer, x, y, CellStatus.getCellStatus(value));
                 // Set the full line, row and quadrant as Forbidden for this layer value.
-                fillLineAsForbidden(i, x, y);
-                fillRowAsForbidden(i, x, y);
-                fillQuadrantAsForbidden(i, x, y);
+                fillLineAsForbidden(layer, x, y);
+                fillRowAsForbidden(layer, x, y);
+                fillQuadrantAsForbidden(layer, x, y);
             } else {
-                setCellStatus(i, x, y, CellStatus.OCCUPIED);
+                setCellStatus(layer, x, y, CellStatus.OCCUPIED);
             }
         }
     }
@@ -130,9 +130,9 @@ public class Grid {
         checkY(y);
 
         String value = StringUtils.SPACE;
-        for (int i = 0; i < HIGHER_BOUND; i++){
-            if (cells[i][x][y] != CellStatus.OCCUPIED && cells[i][x][y] != CellStatus.EMPTY  && cells[i][x][y] != CellStatus.FORBIDDEN){
-                value = cells[i][x][y].getValue().toString();
+        for (int layer = 0; layer < HIGHER_BOUND; layer++){
+            if (cells[layer][x][y] != CellStatus.OCCUPIED && cells[layer][x][y] != CellStatus.EMPTY  && cells[layer][x][y] != CellStatus.FORBIDDEN){
+                value = cells[layer][x][y].getValue().toString();
             }
         }
 
@@ -146,25 +146,25 @@ public class Grid {
         checkY(y);
 
         Integer value = Integer.MIN_VALUE;
-        for (int i = 0; i < HIGHER_BOUND; i++) {
-            if (cells[i][x][y] != CellStatus.OCCUPIED && cells[i][x][y] != CellStatus.EMPTY && cells[i][x][y] != CellStatus.FORBIDDEN) {
-                value = cells[i][x][y].getValue();
+        for (int layer = 0; layer < HIGHER_BOUND; layer++) {
+            if (cells[layer][x][y] != CellStatus.OCCUPIED && cells[layer][x][y] != CellStatus.EMPTY && cells[layer][x][y] != CellStatus.FORBIDDEN) {
+                value = cells[layer][x][y].getValue();
             }
         }
 
         return value;
     }
 
-    public boolean isValueSet(int x, int y) {
+    public boolean isValueNotSet(int x, int y) {
 
         checkX(x);
 
         checkY(y);
 
-        return Integer.MIN_VALUE != getValue(x, y);
+        return Integer.MIN_VALUE == getValue(x, y);
     }
 
-    public boolean isGridFinished() {
+    public boolean isGridNotFinished() {
         boolean gridFinished = true;
 
         for (int x = LOWER_BOUND; x < HIGHER_BOUND; x++) {
@@ -179,7 +179,7 @@ public class Grid {
             }
         }
 
-        return gridFinished;
+        return !gridFinished;
     }
 
     public Collection<String> getCellPossibleValues(int x, int y) {
@@ -189,9 +189,9 @@ public class Grid {
         checkY(y);
 
         List<String> possibleValues = new ArrayList<>();
-        for (int i = 0; i < HIGHER_BOUND; i++){
-            if (cells[i][x][y] == CellStatus.EMPTY){
-                possibleValues.add(String.valueOf(i + 1));
+        for (int layer = 0; layer < HIGHER_BOUND; layer++){
+            if (cells[layer][x][y] == CellStatus.EMPTY){
+                possibleValues.add(String.valueOf(layer + 1));
             }
         }
 
@@ -263,6 +263,29 @@ public class Grid {
         return Pair.of(quadrantX, quadrantY);
     }
 
+    public boolean isInitialValue(int x, int y) {
+        return (initialValuesCells[x][y] != 0);
+    }
+
+    @Override
+    public Grid clone() throws CloneNotSupportedException {
+        Grid newGrid = (Grid) super.clone();
+
+        for (int layer = LOWER_BOUND; layer < HIGHER_BOUND; layer++){
+            for (int x = LOWER_BOUND; x < HIGHER_BOUND; x++){
+                System.arraycopy(this.cells[layer][x], LOWER_BOUND, newGrid.cells[layer][x], LOWER_BOUND, HIGHER_BOUND);
+            }
+        }
+
+        for (int x = LOWER_BOUND; x < HIGHER_BOUND; x++){
+            System.arraycopy(this.initialValuesCells[x], LOWER_BOUND, newGrid.initialValuesCells[x], LOWER_BOUND, HIGHER_BOUND);
+        }
+
+        newGrid.initialisation = this.initialisation;
+
+        return newGrid;
+    }
+
     private void fillLineAsForbidden(int layer, int x, int y) {
         for (int cpt = LOWER_BOUND; cpt < HIGHER_BOUND; cpt++){
             if (cpt != y){
@@ -279,16 +302,16 @@ public class Grid {
         }
     }
 
-    private void fillQuadrantAsForbidden(int i, int x, int y) {
+    private void fillQuadrantAsForbidden(int layer, int x, int y) {
         Pair<Integer, Integer> quadrant = findQuadrant(x, y);
 
         int quadrantX = quadrant.getLeft();
         int quadrantY = quadrant.getRight();
 
-        for (int cptX = LOWER_BOUND; cptX < 3; cptX++){
-            for (int cptY = LOWER_BOUND; cptY < 3; cptY++){
+        for (int cptX = QUADRANT_LOW_BOUND; cptX <= QUADRANT_HIGH_BOUND; cptX++) {
+            for (int cptY = QUADRANT_LOW_BOUND; cptY <= QUADRANT_HIGH_BOUND; cptY++) {
                 if ((cptX + (3 * quadrantX)) != x && (cptY + (3 * quadrantY)) != y) {
-                    setCellStatus(i, cptX + (3 * quadrantX), cptY + (3 * quadrantY), CellStatus.FORBIDDEN);
+                    setCellStatus(layer, cptX + (3 * quadrantX), cptY + (3 * quadrantY), CellStatus.FORBIDDEN);
                 }
             }
         }
@@ -301,9 +324,5 @@ public class Grid {
                 initialValuesCells[x][y] = cellStatus.getValue();
             }
         }
-    }
-
-    public boolean isInitialValue(int x, int y) {
-        return (initialValuesCells[x][y] != 0);
     }
 }
