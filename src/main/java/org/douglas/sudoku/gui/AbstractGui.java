@@ -6,9 +6,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
-public abstract class AbstractGui extends JPanel {
+abstract class AbstractGui extends JPanel {
     protected final Grid grid;
-    protected JPanel buttonsPanel = new JPanel();
 
     AbstractGui(final Grid grid) {
         super(new BorderLayout());
@@ -23,14 +22,27 @@ public abstract class AbstractGui extends JPanel {
 
         add(gridPanel, BorderLayout.CENTER);
 
-        addActionButton();
-
-        addCancelButton();
-
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.add(addActionButton());
+        buttonsPanel.add(addCancelButton());
         add(buttonsPanel, BorderLayout.SOUTH);
     }
 
-    protected abstract void addActionButton();
+    protected abstract JComponent fillQuadrantCell(Grid grid, int currentX, int currentY);
+
+    protected abstract JButton addActionButton();
+
+    protected JButton addCancelButton() {
+        JButton cancelButton = new JButton("Exit");
+        cancelButton.addActionListener(e -> {
+            System.out.println(e.getActionCommand());
+            System.out.println(e.getSource().toString());
+            System.out.println(e.toString());
+            System.exit(0);
+        });
+
+        return cancelButton;
+    }
 
     private void addQuadrantToPanel(Grid grid, JPanel gridPanel, Border thinBlackLine) {
         for (int quadrantX = Grid.QUADRANT_LOW_BOUND; quadrantX <= Grid.QUADRANT_HIGH_BOUND; quadrantX++) {
@@ -62,19 +74,4 @@ public abstract class AbstractGui extends JPanel {
         comp.setBorder(border);
         container.add(comp);
     }
-
-    protected abstract JComponent fillQuadrantCell(Grid grid, int currentX, int currentY);
-
-    protected void addCancelButton() {
-        JButton cancelButton = new JButton("Exit");
-        cancelButton.addActionListener(e -> {
-            System.out.println(e.getActionCommand());
-            System.out.println(e.getSource().toString());
-            System.out.println(e.toString());
-            System.exit(0);
-        });
-
-        buttonsPanel.add(cancelButton);
-    }
-
 }

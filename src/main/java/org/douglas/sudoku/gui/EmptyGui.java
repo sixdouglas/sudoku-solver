@@ -54,7 +54,7 @@ final class EmptyGui extends AbstractGui {
         return textField;
     }
 
-    protected void addActionButton() {
+    protected JButton addActionButton() {
         JButton actionButton = new JButton("Solve");
         actionButton.addActionListener(e -> {
             this.grid.stopInitialisation();
@@ -63,7 +63,7 @@ final class EmptyGui extends AbstractGui {
             }
         });
 
-        buttonsPanel.add(actionButton);
+        return actionButton;
     }
 
     private class JTextFieldLimit extends PlainDocument {
