@@ -67,7 +67,7 @@ final class SolvedGui extends AbstractGui {
         return component;
     }
 
-    protected void addActionButton() {
+    protected JButton addActionButton() {
         JButton actionButton = new JButton("Reset");
         actionButton.addActionListener(e -> {
             for (ResetListener listener : listeners) {
@@ -75,6 +75,6 @@ final class SolvedGui extends AbstractGui {
             }
         });
 
-        buttonsPanel.add(actionButton);
+        return actionButton;
     }
 }
