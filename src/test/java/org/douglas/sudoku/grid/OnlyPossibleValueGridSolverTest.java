@@ -16,6 +16,19 @@
 
 package org.douglas.sudoku.grid;
 
-public interface InitializationListener {
-    void initializationDone();
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * @author Douglas SIX
+ */
+public class OnlyPossibleValueGridSolverTest {
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @Test
+    public void run() {
+    }
 }

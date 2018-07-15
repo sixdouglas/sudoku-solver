@@ -14,37 +14,30 @@
  * limitations under the License.
  */
 
-package org.douglas.sudoku;
+package org.douglas.sudoku.solver;
 
 import lombok.extern.log4j.Log4j2;
-import org.douglas.sudoku.gui.MainGui;
+import org.douglas.sudoku.grid.Grid;
 
-import javax.swing.*;
-
-import static javax.swing.SwingUtilities.invokeLater;
+import java.util.Collection;
 
 /**
  * @author Douglas SIX
  */
 @Log4j2
-public final class Application implements Runnable {
-
-    private Application(){
-    }
-
-    public static void main(String[] args) {
-        Application app = new Application();
-        app.run();
-    }
+final class OnlyPossibleValueGridSolver extends GridSolver {
 
     @Override
-    public void run() {
-        invokeLater(this::createAndShowGUI);
-    }
+    protected boolean findSolution(Grid gridToSolve, int x, int y) {
+        Collection<String> cellPossibleValues = gridToSolve.getCellPossibleValues(x, y);
 
-    private void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new MainGui();
-        frame.setVisible(true);
+        if (cellPossibleValues.size() == 1) {
+            Integer value = Integer.valueOf(cellPossibleValues.iterator().next());
+            log.trace(String.format("unique value found:   X: %s, Y: %s, Value: %d", x, y, value));
+            gridToSolve.setCellValue(x, y, value);
+            return true;
+        }
+
+        return false;
     }
 }
