@@ -9,11 +9,11 @@ internet. For example https://en.wikipedia.org/wiki/Sudoku[here] on Wikipedia.
 
 A simple grid would look like this:
 
-image::https://upload.wikimedia.org/wikipedia/commons/e/e0/Sudoku_Puzzle_by_L2G-20050714_standardized_layout.svg[Initial grid]
+image::https://upload.wikimedia.org/wikipedia/commons/e/e0/Sudoku_Puzzle_by_L2G-20050714_standardized_layout.svg[Initial grid,360]
 
 The black numbers are the initial values.
 
-image::https://upload.wikimedia.org/wikipedia/commons/1/12/Sudoku_Puzzle_by_L2G-20050714_solution_standardized_layout.svg[Solved]
+image::https://upload.wikimedia.org/wikipedia/commons/1/12/Sudoku_Puzzle_by_L2G-20050714_solution_standardized_layout.svg[Solved,360]
 
 The red numbers are the numbers that solve the puzzle.
 
@@ -27,18 +27,21 @@ This is a personal project to solve automatically Sudoku puzzles.
 
 This program is built on a Grid (basically a 3 dimensions jagged array).
 
-image::grid_and_layers.png[Grid and Layers]
+.Grid and layers
+image::grid_and_layers.png[Grid and Layers,360]
 
 Every *Value* (1, 2, 3 ...) has its own layer : the first dimension of the Grid.
 
 Every *Cell* on the Grid is identified with its coordinates: `(x, y)`,
 the last two dimensions of the grid.
 
-image::grid_and_coordinates.png[Coordinates]
+.Grid coordinates
+image::grid_and_coordinates.png[Coordinates,360]
 
 Every Cell is grouped by quadrant.
 
-image::grid_quadrant.png[Quadrant]
+.Grid Quandrant
+image::grid_quadrant.png[Quadrant,360]
 
 These arrays *Values* are picked from the `CellStatus` enum.
 
@@ -52,9 +55,12 @@ Every other cells on the same line (same x coordinate),
 same column (same y coordinate)
 and same quadrant are set as `CellStatus.FORBIDDEN`.
 
-image::grid_forbidden_and_occupied.png[Empty, Forbidden and Occupied]
+.Empty, Forbidden or Occupied cells
+image::grid_forbidden_and_occupied.png[alt="Empty, Forbidden and Occupied",360]
 
-Empty cells are in white, forbidden in red, occupied in blue.
+* Empty cells are represented in **white**
+* Forbidden cells are represented in **red**.
+* Occupied cells are represented in **blue**.
 
 An additional two dimensions array is maintained to memorize the original values.
 
@@ -63,10 +69,20 @@ This Grid ensure the integrity of the program.
 === The GUI
 
 The application launch the `MainGui` that will in turn choose between EmptyGui and SolvedGui.
+At Startup you will see the `EmptyGui`.
+
+.Empty GUI
+image::gui_empty.png[Empty GUI, 360]
 
 The `EmptyGui` is the one that allows the user to fill the grid with the initial values.
 
+.Empty GUI filled with initial values
+image::gui_initial_values.png[User Initial values, 360]
+
 The `SolvedGui` is the one displaying the puzzle solution. The values in red are the initial ones.
+
+.Solved puzzle
+image::gui_solved.png[Solved Puzzle GUI, 360]
 
 Both classes extends the `AbstractGui` that comes with the routine who build the Quadrants
 and the inner cells and the bottom toolbar with the exit button. Two methods are to be implemented
