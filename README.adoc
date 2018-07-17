@@ -1,8 +1,113 @@
+:imagesdir: ./doc
+
 = Sudoku Solver
+
+== Suboku
+
+If you don't know what Sudoku is you can find a lot of good documentation on
+internet. For example https://en.wikipedia.org/wiki/Sudoku[here] on Wikipedia.
+
+A simple grid would look like this:
+
+image::https://upload.wikimedia.org/wikipedia/commons/e/e0/Sudoku_Puzzle_by_L2G-20050714_standardized_layout.svg[Initial grid]
+
+The black numbers are the initial values.
+
+image::https://upload.wikimedia.org/wikipedia/commons/1/12/Sudoku_Puzzle_by_L2G-20050714_solution_standardized_layout.svg[Solved]
+
+The red numbers are the numbers that solve the puzzle.
+
+== What is this?
 
 This is a personal project to solve automatically Sudoku puzzles.
 
-This program is built on a Grid. This grid has multiple layers.
-One layer per number.
+== How has it been built
 
-Every time a number is entered the corresponding layer is updated.
+=== The GRID
+
+This program is built on a Grid (basically a 3 dimensions jagged array).
+
+image::grid_and_layers.png[Grid and Layers]
+
+Every *Value* (1, 2, 3 ...) has its own layer : the first dimension of the Grid.
+
+Every *Cell* on the Grid is identified with its coordinates: `(x, y)`,
+the last two dimensions of the grid.
+
+image::grid_and_coordinates.png[Coordinates]
+
+Every Cell is grouped by quadrant.
+
+image::grid_quadrant.png[Quadrant]
+
+These arrays *Values* are picked from the `CellStatus` enum.
+
+Initially all the cells have the `CellStatus.EMPTY` value.
+
+Every time a number is entered at coordinate `(x,y)`
+the corresponding layer is updated with the *Value*
+(`CellStatus.ONE`, `CellStatus.TWO`...).
+
+Every other cells on the same line (same x coordinate),
+same column (same y coordinate)
+and same quadrant are set as `CellStatus.FORBIDDEN`.
+
+image::grid_forbidden_and_occupied.png[Empty, Forbidden and Occupied]
+
+Empty cells are in white, forbidden in red, occupied in blue.
+
+An additional two dimensions array is maintained to memorize the original values.
+
+This Grid ensure the integrity of the program.
+
+=== The GUI
+
+The application launch the `MainGui` that will in turn choose between EmptyGui and SolvedGui.
+
+The `EmptyGui` is the one that allows the user to fill the grid with the initial values.
+
+The `SolvedGui` is the one displaying the puzzle solution. The values in red are the initial ones.
+
+Both classes extends the `AbstractGui` that comes with the routine who build the Quadrants
+and the inner cells and the bottom toolbar with the exit button. Two methods are to be implemented
+by the subclasses.
+
+* The first one is used to fill the cells with:
+** TextFiled for the `EmptyGui` class.
+** colored value for the `SolvedGui` class.
+* The second is used to add the action buttons:
+** 'Solve' for the `EmptyGui` class.
+** 'Reset' for the `SolvedGui` class.
+
+=== The SOLVER ENGINE
+
+The `GridSolverEngine` has a set of solvers, currently two. It runs the two solvers
+against the Grid to try to solve it.
+
+Every solver extends `GridSolver` which contains the routine that goes through every cells
+and then call the subclass overloaded `findSolution` method. The solver stops either
+when the Grid is solved or when the Solver went through the whole Grid without being
+able to find any solutions.
+
+==== OnlyPossibleValueGridSolver
+
+This solver checks if there is only one possible Value for the current cell.
+If true then it sets it.
+
+==== OnlyPossibleValuePlaceGridSolver
+
+This solver checks for every possible values in the current cell if one of these values
+can't be place somewhere else on the same Row, same Column of same Quadrant. If so than
+it will set the value.
+
+== How to build it
+
+Simple `mvn` command will do the trick
+
+ mvn compile
+
+== How to run it
+
+Simple `mvn` command will do it here too
+
+ mvn exec:java
